@@ -1,5 +1,7 @@
 package agent;
 
+import common.Agent;
+
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
