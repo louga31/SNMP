@@ -7,9 +7,9 @@ public class Agent extends UnicastRemoteObject implements AgentInterface {
     private String name;
     private String address;
 
-    public Agent() throws RemoteException {
-        name = "Default name";
-        address = "127.0.0.1";
+    public Agent(String name, String address) throws RemoteException {
+        this.name = name;
+        this.address = address;
     }
 
     public String getName() throws RemoteException {
@@ -17,6 +17,12 @@ public class Agent extends UnicastRemoteObject implements AgentInterface {
     }
 
     public void setName(String newName) throws RemoteException {
+        try {
+            Naming.unbind("rmi://localhost:1099/Agent_" + name);
+            Naming.rebind("rmi://localhost:1099/Agent_" + newName, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         name = newName;
     }
 
