@@ -4,7 +4,6 @@ import common.Agent;
 
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 public class AgentLauncher {
     private static final int RMI_PORT = 1099;
