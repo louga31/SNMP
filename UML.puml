@@ -1,0 +1,27 @@
+@startuml
+class manager.Manager {
++ {static} void main(String[])
+}
+interface common.AgentInterface {
+~ String getName()
+~ void setName(String)
+~ String getAddress()
+~ void setAddress(String)
+}
+class common.Agent {
+- String name
+- String address
++ String getName()
++ void setName(String)
++ String getAddress()
++ void setAddress(String)
+}
+class agent.AgentLauncher {
+- {static} int RMI_PORT
++ {static} void main(String[])
+}
+
+manager.Manager -> common.AgentInterface
+agent.AgentLauncher -> common.Agent
+common.AgentInterface <|.. common.Agent
+@enduml
