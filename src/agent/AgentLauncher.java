@@ -2,6 +2,7 @@ package agent;
 
 import common.Agent;
 
+import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -21,16 +22,13 @@ public class AgentLauncher {
             // Create the agent
             Agent agent = new Agent(deviceName, deviceAddress);
 
-            // Start the RMI registry
-            Registry registry = LocateRegistry.getRegistry(RMI_PORT);
-
             // Register the agent with the RMI registry
             String url = "rmi://localhost:" + RMI_PORT + "/Agent_" + deviceName;
             try {
-                registry.rebind(url, agent);
+                Naming.rebind(url, agent);
             } catch (Exception e) {
-                registry = LocateRegistry.createRegistry(RMI_PORT);
-                registry.rebind(url, agent);
+                LocateRegistry.createRegistry(RMI_PORT);
+                Naming.rebind(url, agent);
             }
 
 
