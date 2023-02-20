@@ -14,21 +14,32 @@ public class Agent extends UnicastRemoteObject implements AgentInterface {
         this.mib = mib;
     }
 
-    public String getName() throws RemoteException {
-        return name;
+    @Override
+    public MIBEntry get(String oid) throws RemoteException {
+        if (!mib.containsKey(oid)) {
+            return null;
+        }
+
+        return mib.get(oid);
     }
 
-    public void setName(String newName) throws RemoteException {
+    @Override
+    public void set(String oid, String value) throws RemoteException {
+        mib.get(oid).setValue(value);
         try {
-            Naming.unbind("rmi://localhost:1099/Agent_" + name);
-            Naming.rebind("rmi://localhost:1099/Agent_" + newName, this);
+            mib.saveToFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        name = newName;
     }
 
-    public String getAddress() throws RemoteException {
-        return address;
+    @Override
+    public MIBEntry get_next(String oid) throws RemoteException {
+        int value = (int) Character.getNumericValue(oid.charAt(oid.length() - 1)) +1; // Valeur de fin de l'OID +1
+        MIBEntry entry = this.get(oid.substring(0,oid.length()-2) + "." + value); // On récupère l'OID suivant
+        if (entry == null) {
+            return this.get(oid.substring(0,oid.length()-2) + "." + 0); // Si l'OID suivant n'existe pas, on retourne l'OID 0
+        }
+        return entry;
     }
 }
