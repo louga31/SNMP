@@ -1,8 +1,10 @@
 package manager;
 
 import common.AgentInterface;
+import mib.MIBEntry;
 
 import java.rmi.*;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Manager {
@@ -33,21 +35,40 @@ public class Manager {
                         }
 
                         switch (command) {
-                            case "getName" -> System.out.println("Agent name: " + agent.getName());
-                            case "setName" -> {
-                                System.out.println("Enter the new name:");
-                                String newName = sc.nextLine();
-                                agent.setName(newName);
-                                System.out.println("Agent name changed to: " + agent.getName());
-                                command = "disconnect";
+
+                            case "set" -> {
+                                System.out.println("Enter OID:");
+                                String oid = sc.nextLine();
+                                System.out.println("Enter value:");
+                                String value = sc.nextLine();
+                                agent.set(oid, value);
                             }
-                            case "getAddress" -> System.out.println("Agent address: " + agent.getAddress());
-                            case "setAddress" -> {
-                                System.out.println("Enter the new address:");
-                                String newAddress = sc.nextLine();
-                                agent.setAddress(newAddress);
-                                System.out.println("Agent address changed to: " + agent.getAddress());
+
+                            case "get" -> {
+                                System.out.println("Enter OID:");
+                                String oid = sc.nextLine();
+                                System.out.println(agent.get(oid));
                             }
+
+                            case "get-next" -> {
+                                System.out.println("Enter OID:");
+                                String oid = sc.nextLine();
+                                System.out.println(agent.get_next(oid));
+                            }
+
+                            case "walk" -> {
+                                System.out.println("Enter OID:");
+                                String oid = sc.nextLine();
+                                MIBEntry entry = agent.get(oid + ".0");
+                                System.out.println(entry);
+                                while (!Objects.isNull(entry) && !agent.get_next(entry.getOid()).getOid().equals(oid + ".0")) {
+                                    entry = agent.get_next(entry.getOid());
+                                    if (!Objects.isNull(entry)) {
+                                        System.out.println(entry);
+                                    }
+                                }
+                            }
+
                             default -> System.out.println("Invalid command");
                         }
                     }

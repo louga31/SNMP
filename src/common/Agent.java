@@ -1,15 +1,17 @@
 package common;
 
+import mib.MIB;
+import mib.MIBEntry;
+
 import java.rmi.*;
 import java.rmi.server.*;
 
 public class Agent extends UnicastRemoteObject implements AgentInterface {
-    private String name;
-    private String address;
-
-    public Agent(String name, String address) throws RemoteException {
-        this.name = name;
-        this.address = address;
+    private String deviceName;
+    private MIB mib;
+    public Agent(String deviceName, MIB mib) throws RemoteException {
+        this.deviceName = deviceName;
+        this.mib = mib;
     }
 
     public String getName() throws RemoteException {
@@ -28,9 +30,5 @@ public class Agent extends UnicastRemoteObject implements AgentInterface {
 
     public String getAddress() throws RemoteException {
         return address;
-    }
-
-    public void setAddress(String address) throws RemoteException {
-        this.address = address;
     }
 }
