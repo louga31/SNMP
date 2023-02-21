@@ -2,26 +2,63 @@
 class manager.Manager {
 + {static} void main(String[])
 }
+class mib.Permission {
+- String readCommunityString
+- String writeCommunityString
++ boolean hasReadAccess(String)
++ boolean hasWriteAccess(String)
+}
+enum mib.AccessType {
++  NO_ACCESS
++  READ_ONLY
++  READ_WRITE
+}
 interface common.AgentInterface {
-~ String getName()
-~ void setName(String)
-~ String getAddress()
-~ void setAddress(String)
+~ MIBEntry get(String,String)
+~ void set(String,String,String)
+~ MIBEntry get_next(String,String)
+}
+class mib.MIBEntry {
+- String oid
+- String name
+- String value
+- AccessType accessType
++ String getOid()
++ String getName()
++ Object getValue()
++ AccessType getAccessType()
++ void setValue(String)
++ String toString()
 }
 class common.Agent {
-- String name
-- String address
-+ String getName()
-+ void setName(String)
-+ String getAddress()
-+ void setAddress(String)
+- MIB mib
++ MIBEntry get(String,String)
++ void set(String,String,String)
++ MIBEntry get_next(String,String)
+}
+class mib.MIB {
+- HashMap<String,MIBEntry> entries
+- String deviceName
+- Permission defaultPermission
+- void addEntry(String,String,String,AccessType)
+- void addArrayEntry(String,String,String[],AccessType)
++ MIBEntry get(String,String)
++ void set(String,String,String)
++ void saveToFile()
++ {static} MIB loadFromFile(String)
 }
 class agent.AgentLauncher {
 - {static} int RMI_PORT
 + {static} void main(String[])
 }
 
+
 manager.Manager -> common.AgentInterface
 agent.AgentLauncher -> common.Agent
 common.AgentInterface <|.. common.Agent
+common.Agent ..> mib.MIB
+mib.MIB ..> mib.MIBEntry
+mib.MIBEntry ..> mib.AccessType
+mib.MIB ..> mib.Permission
+
 @enduml
