@@ -14,6 +14,8 @@ public class Manager {
             AgentInterface agent;
 
             Scanner sc = new Scanner(System.in);
+            System.out.println("Enter your community string:");
+            String communityString = sc.nextLine();
             while (!agentName.equals("exit")) {
                 System.out.println("Enter the name of the agent you want to manage (or exit to quit):");
                 agentName = sc.nextLine();
@@ -34,35 +36,36 @@ public class Manager {
                             break;
                         }
 
-                        switch (command) {
+                        String[] commandParts = command.split(" ");
+                        if (commandParts.length != 2) {
+                            System.out.println("Invalid command");
+                            continue;
+                        }
 
+                        switch (commandParts[0].toLowerCase()) {
                             case "set" -> {
-                                System.out.println("Enter OID:");
-                                String oid = sc.nextLine();
+                                String oid = commandParts[1];
                                 System.out.println("Enter value:");
                                 String value = sc.nextLine();
-                                agent.set(oid, value);
+                                agent.set(oid, value, communityString);
                             }
 
                             case "get" -> {
-                                System.out.println("Enter OID:");
-                                String oid = sc.nextLine();
-                                System.out.println(agent.get(oid));
+                                String oid = commandParts[1];
+                                System.out.println(agent.get(oid, communityString));
                             }
 
                             case "get-next" -> {
-                                System.out.println("Enter OID:");
-                                String oid = sc.nextLine();
-                                System.out.println(agent.get_next(oid));
+                                String oid = commandParts[1];
+                                System.out.println(agent.get_next(oid, communityString));
                             }
 
                             case "walk" -> {
-                                System.out.println("Enter OID:");
-                                String oid = sc.nextLine();
-                                MIBEntry entry = agent.get(oid + ".0");
+                                String oid = commandParts[1];
+                                MIBEntry entry = agent.get(oid + ".0", communityString);
                                 System.out.println(entry);
-                                while (!Objects.isNull(entry) && !agent.get_next(entry.getOid()).getOid().equals(oid + ".0")) {
-                                    entry = agent.get_next(entry.getOid());
+                                while (!Objects.isNull(entry) && !agent.get_next(entry.getOid(), communityString).getOid().equals(oid + ".0")) {
+                                    entry = agent.get_next(entry.getOid(), communityString);
                                     if (!Objects.isNull(entry)) {
                                         System.out.println(entry);
                                     }

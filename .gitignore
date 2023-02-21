@@ -7,3 +7,6 @@
 
 # IntelliJ
 out/
+
+# MIB files
+*.mib

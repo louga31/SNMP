@@ -1,44 +1,33 @@
 package common;
 
-import mib.MIB;
-import mib.MIBEntry;
+import mib.*;
 
 import java.rmi.*;
 import java.rmi.server.*;
 
 public class Agent extends UnicastRemoteObject implements AgentInterface {
-    private String deviceName;
-    private MIB mib;
-    public Agent(String deviceName, MIB mib) throws RemoteException {
-        this.deviceName = deviceName;
+    private final MIB mib;
+
+    public Agent(MIB mib) throws RemoteException {
         this.mib = mib;
     }
 
     @Override
-    public MIBEntry get(String oid) throws RemoteException {
-        if (!mib.containsKey(oid)) {
-            return null;
-        }
-
-        return mib.get(oid);
+    public MIBEntry get(String oid, String communityString) throws RemoteException {
+        return mib.get(oid, communityString);
     }
 
     @Override
-    public void set(String oid, String value) throws RemoteException {
-        mib.get(oid).setValue(value);
-        try {
-            mib.saveToFile();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void set(String oid, String value, String communityString) throws RemoteException {
+        mib.set(oid, value, communityString);
     }
 
     @Override
-    public MIBEntry get_next(String oid) throws RemoteException {
-        int value = (int) Character.getNumericValue(oid.charAt(oid.length() - 1)) +1; // Valeur de fin de l'OID +1
-        MIBEntry entry = this.get(oid.substring(0,oid.length()-2) + "." + value); // On récupère l'OID suivant
+    public MIBEntry get_next(String oid, String communityString) throws RemoteException {
+        int value = Character.getNumericValue(oid.charAt(oid.length() - 1)) +1; // Valeur de fin de l'OID +1
+        MIBEntry entry = this.get(oid.substring(0,oid.length()-2) + "." + value, communityString); // On récupère l'OID suivant
         if (entry == null) {
-            return this.get(oid.substring(0,oid.length()-2) + "." + 0); // Si l'OID suivant n'existe pas, on retourne l'OID 0
+            return this.get(oid.substring(0,oid.length()-2) + "." + 0, communityString); // Si l'OID suivant n'existe pas, on retourne l'OID 0
         }
         return entry;
     }

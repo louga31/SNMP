@@ -2,7 +2,6 @@ package agent;
 
 import common.Agent;
 import mib.MIB;
-import mib.MIBEntry;
 
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
@@ -26,7 +25,7 @@ public class AgentLauncher {
             }
 
             // Create the agent
-            Agent agent = new Agent(deviceName, mib);
+            Agent agent = new Agent(mib);
 
             // Register the agent with the RMI registry
             String url = "rmi://localhost:" + RMI_PORT + "/Agent_" + deviceName;

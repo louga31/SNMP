@@ -3,14 +3,16 @@ package mib;
 import java.io.Serializable;
 
 public class MIBEntry implements Serializable {
-    private String oid;
-    private String name;
+    private final String oid;
+    private final String name;
     private String value;
+    private final AccessType accessType;
 
-    public MIBEntry(String oid, String name, String value) {
+    public MIBEntry(String oid, String name, String value, AccessType accessType) {
         this.oid = oid;
         this.name = name;
         this.value = value;
+        this.accessType = accessType;
     }
 
     public String getOid() {
@@ -23,6 +25,10 @@ public class MIBEntry implements Serializable {
 
     public Object getValue() {
         return value;
+    }
+
+    public AccessType getAccessType() {
+        return accessType;
     }
 
     public void setValue(String value) {
