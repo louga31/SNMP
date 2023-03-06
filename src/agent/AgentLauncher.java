@@ -37,6 +37,11 @@ public class AgentLauncher {
             }
 
             System.out.println("Agent launched for device " + deviceName);
+
+            // Trigger trap on enter key
+            while(System.in.read() != ' ') {
+                agent.sendTrap("Hello from " + deviceName);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
