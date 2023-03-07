@@ -17,6 +17,8 @@ interface common.AgentInterface {
 ~ MIBEntry get(String,String)
 ~ void set(String,String,String)
 ~ MIBEntry get_next(String,String)
+~ void subscribe(TrapListener)
+~ void unsubscribe(TrapListener)
 }
 class mib.MIBEntry {
 - String oid
@@ -30,11 +32,15 @@ class mib.MIBEntry {
 + void setValue(String)
 + String toString()
 }
-class common.Agent {
+class agent.Agent {
 - MIB mib
+- HashSet<TrapListener> listeners
 + MIBEntry get(String,String)
 + void set(String,String,String)
++ void subscribe(TrapListener)
++ void unsubscribe(TrapListener)
 + MIBEntry get_next(String,String)
++ void sendTrap(String)
 }
 class mib.MIB {
 - HashMap<String,MIBEntry> entries
@@ -47,18 +53,25 @@ class mib.MIB {
 + void saveToFile()
 + {static} MIB loadFromFile(String)
 }
+interface common.TrapListener {
+~ void notify(String)
+}
 class agent.AgentLauncher {
 - {static} int RMI_PORT
 + {static} void main(String[])
 }
+class manager.TrapListenerImpl {
++ void notify(String)
+}
 
-
+agent.Agent -> common.TrapListener
 manager.Manager -> common.AgentInterface
-agent.AgentLauncher -> common.Agent
-common.AgentInterface <|.. common.Agent
-common.Agent ..> mib.MIB
+agent.AgentLauncher -> agent.Agent
+common.AgentInterface <|.. agent.Agent
+agent.Agent ..> mib.MIB
 mib.MIB ..> mib.MIBEntry
 mib.MIBEntry ..> mib.AccessType
 mib.MIB ..> mib.Permission
-
+common.TrapListener <|.. manager.TrapListenerImpl
+manager.Manager ..> manager.TrapListenerImpl
 @enduml
