@@ -21,7 +21,7 @@ public class Manager {
             String communityString = sc.nextLine();
             while (true) {
                 System.out.println("Enter the name of the agent you want to manage (or exit to quit):");
-                agentName = sc.nextLine();
+                agentName = sc.nextLine().split(" ")[0];
                 if (agentName.equals("exit")) {
                     break;
                 }
@@ -30,15 +30,12 @@ public class Manager {
                     agent = (AgentInterface) Naming.lookup("rmi://localhost/Agent_" + agentName);
                     System.out.println("Successfully connected to agent: " + agentName);
 
-                    agent.subscribe(trapListener);
-
                     String command;
 
                     while (true) {
                         System.out.println("Enter a command (disconnect to quit):");
                         command = sc.nextLine();
                         if (command.equals("disconnect")) {
-                            agent.unsubscribe(trapListener);
                             break;
                         }
 
@@ -76,6 +73,18 @@ public class Manager {
                                         System.out.println(entry);
                                     }
                                 }
+                            }
+
+                            case "subscribe" -> {
+                                String oid = commandParts[1];
+                                agent.subscribe(trapListener, oid, communityString);
+                                System.out.println("Subscribed to " + oid);
+                            }
+
+                            case "unsubscribe" -> {
+                                String oid = commandParts[1];
+                                agent.unsubscribe(trapListener, oid);
+                                System.out.println("Unsubscribed from " + oid);
                             }
 
                             default -> System.out.println("Invalid command");

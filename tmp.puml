@@ -1,0 +1,77 @@
+@startuml
+class manager.Manager {
++ {static} void main(String[])
+}
+class mib.Permission {
+- String readCommunityString
+- String writeCommunityString
++ boolean hasReadAccess(String)
++ boolean hasWriteAccess(String)
+}
+enum mib.AccessType {
++  NO_ACCESS
++  READ_ONLY
++  READ_WRITE
+}
+interface common.AgentInterface {
+~ MIBEntry get(String,String)
+~ void set(String,String,String)
+~ MIBEntry get_next(String,String)
+~ void subscribe(TrapListener)
+~ void unsubscribe(TrapListener)
+}
+class mib.MIBEntry {
+- String oid
+- String name
+- String value
+- AccessType accessType
++ String getOid()
++ String getName()
++ Object getValue()
++ AccessType getAccessType()
++ void setValue(String)
++ String toString()
+}
+class agent.Agent {
+- MIB mib
+- HashSet<TrapListener> listeners
++ MIBEntry get(String,String)
++ void set(String,String,String)
++ void subscribe(TrapListener)
++ void unsubscribe(TrapListener)
++ MIBEntry get_next(String,String)
++ void sendTrap(String)
+}
+class mib.MIB {
+- HashMap<String,MIBEntry> entries
+- String deviceName
+- Permission defaultPermission
+- void addEntry(String,String,String,AccessType)
+- void addArrayEntry(String,String,String[],AccessType)
++ MIBEntry get(String,String)
++ void set(String,String,String)
++ void saveToFile()
++ {static} MIB loadFromFile(String)
+}
+interface common.TrapListener {
+~ void notify(String)
+}
+class agent.AgentLauncher {
+- {static} int RMI_PORT
++ {static} void main(String[])
+}
+class manager.TrapListenerImpl {
++ void notify(String)
+}
+
+agent.Agent -> common.TrapListener
+manager.Manager -> common.AgentInterface
+agent.AgentLauncher -> agent.Agent
+common.AgentInterface <|.. agent.Agent
+agent.Agent ..> mib.MIB
+mib.MIB ..> mib.MIBEntry
+mib.MIBEntry ..> mib.AccessType
+mib.MIB ..> mib.Permission
+common.TrapListener <|.. manager.TrapListenerImpl
+manager.Manager ..> manager.TrapListenerImpl
+@enduml

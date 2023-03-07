@@ -1,6 +1,5 @@
 package agent;
 
-import common.Agent;
 import mib.MIB;
 
 import java.rmi.Naming;
@@ -40,7 +39,7 @@ public class AgentLauncher {
 
             // Trigger trap on enter key
             while(System.in.read() != ' ') {
-                agent.sendTrap("Hello from " + deviceName);
+                agent.sendTrap("Hello from " + deviceName, "1.1");
             }
         } catch (Exception e) {
             e.printStackTrace();

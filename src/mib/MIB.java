@@ -1,6 +1,8 @@
 package mib;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 
@@ -20,24 +22,27 @@ public class MIB implements Serializable {
         }
     }
 
-    public MIB(String deviceName) {
+    public MIB(String deviceName) throws UnknownHostException {
         this.deviceName = deviceName;
         entries = new HashMap<>();
         // TODO: Default entries
-        addEntry("1.1", "address", "127.0.0.1", AccessType.READ_WRITE);
-        addEntry("1.2", "name", "default", AccessType.READ_WRITE);
+        // get real values from device
+        InetAddress address = InetAddress.getLocalHost();
+
+        addEntry("1.1", "address", address.getHostAddress(), AccessType.READ_WRITE);
+        addEntry("1.2", "name", address.getHostName(), AccessType.READ_WRITE);
         addArrayEntry("1.3", "process", new String[]{"1234", "1337", "4242"}, AccessType.READ_ONLY);
         addArrayEntry("1.4", "dns", new String[]{"1.1.1.1", "1.0.0.1"}, AccessType.READ_WRITE);
     }
 
     public MIBEntry get(String oid, String communityString) throws RemoteException {
-       if (!entries.containsKey(oid)) {
+        if (!entries.containsKey(oid)) {
            return null;
-       }
+        }
 
-         if (!defaultPermission.hasReadAccess(communityString)) {
-              throw new RemoteException("Access denied");
-         }
+        if (!defaultPermission.hasReadAccess(communityString)) {
+          throw new RemoteException("Access denied");
+        }
 
         MIBEntry entry = entries.get(oid);
         if (entry.getAccessType() == AccessType.NO_ACCESS) {
