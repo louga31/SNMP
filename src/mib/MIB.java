@@ -33,6 +33,8 @@ public class MIB implements Serializable {
         addEntry("1.2", "name", address.getHostName(), AccessType.READ_WRITE);
         addArrayEntry("1.3", "process", new String[]{"1234", "1337", "4242"}, AccessType.READ_ONLY);
         addArrayEntry("1.4", "dns", new String[]{"1.1.1.1", "1.0.0.1"}, AccessType.READ_WRITE);
+        addEntry("1.5", "cpuPercentage", "18", AccessType.READ_WRITE);
+
     }
 
     public MIBEntry get(String oid, String communityString) throws RemoteException {

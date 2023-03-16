@@ -36,13 +36,21 @@ public class AgentLauncher {
             }
 
             System.out.println("Agent launched for device " + deviceName);
+            System.out.println();
 
             // Trigger trap on enter key
             while(System.in.read() != ' ') {
                 agent.sendTrap("Hello from " + deviceName, "1.1");
             }
+
+            // Trap CPU Usage Percentage
+            while(Integer.parseInt(mib.get("1.5","private").getValue().toString())>70){
+                agent.sendTrap(deviceName+ " - CPU Usage : ", "1.5");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }
