@@ -2,6 +2,7 @@ package agent;
 
 import mib.MIB;
 
+import java.io.InputStream;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 
@@ -38,14 +39,20 @@ public class AgentLauncher {
             System.out.println("Agent launched for device " + deviceName);
             System.out.println();
 
-            // Trigger trap on enter key
-            while(System.in.read() != ' ') {
-                agent.sendTrap("Hello from " + deviceName, "1.1");
-            }
+            int previousCpuUsage = -1;
+            while(true) {
+                // Trigger trap on enter key
+                InputStream inputStream = System.in;
+                if (inputStream.available() > 0 && inputStream.read() != ' ') {
+                    agent.sendTrap("Hello from " + deviceName, "1.1");
+                }
 
-            // Trap CPU Usage Percentage
-            while(Integer.parseInt(mib.get("1.5","private").getValue().toString())>70){
-                agent.sendTrap(deviceName+ " - CPU Usage : ", "1.5");
+                // Trap CPU Usage Percentage
+                int cpuUsage = Integer.parseInt(mib.get("1.5", "private").getValue().toString());
+                if (cpuUsage > 70 && cpuUsage != previousCpuUsage) {
+                    agent.sendTrap(deviceName + " - CPU Usage : ", "1.5");
+                    previousCpuUsage = cpuUsage;
+                }
             }
 
         } catch (Exception e) {

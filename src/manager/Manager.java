@@ -1,6 +1,7 @@
 package manager;
 
 import common.AgentInterface;
+import common.TrapListener;
 import mib.MIBEntry;
 
 import java.rmi.*;
@@ -10,8 +11,14 @@ import java.util.Scanner;
 public class Manager {
 
     public static void main(String[] args) {
+
+        String deviceName = args[0];
         try {
-            TrapListenerImpl trapListener = new TrapListenerImpl();
+            HierarchicalManager trapListener = new HierarchicalManager();
+
+            // Register the agent with the RMI registry
+            String url = "rmi://localhost/Manager_" + deviceName;
+            Naming.rebind(url, trapListener);
 
             String agentName;
             AgentInterface agent;
@@ -73,6 +80,20 @@ public class Manager {
                                         System.out.println(entry);
                                     }
                                 }
+                            }
+
+                            case "add-child" -> {
+                                String childManagerName = commandParts[1];
+                                TrapListener childManager = (TrapListener) Naming.lookup("rmi://localhost/Manager_" + childManagerName);
+                                trapListener.addChildManager(childManager);
+                                System.out.println("Added child manager: " + childManagerName);
+                            }
+
+                            case "remove-child" -> {
+                                String childManagerName = commandParts[1];
+                                TrapListener childManager = (TrapListener) Naming.lookup("rmi://localhost/Manager_" + childManagerName);
+                                trapListener.removeChildManager(childManager);
+                                System.out.println("Removed child manager: " + childManagerName);
                             }
 
                             case "subscribe" -> {
