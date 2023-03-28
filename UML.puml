@@ -63,6 +63,12 @@ class agent.AgentLauncher {
 class manager.TrapListenerImpl {
 + void notify(String)
 }
+class manager.HierarchicalManager {
+- List<TrapListener> childManagers
++ void addChildManager(TrapListener)
++ void removeChildManager(TrapListener)
++ void notify(String)
+}
 
 agent.Agent -> common.TrapListener
 manager.Manager -> common.AgentInterface
@@ -74,4 +80,5 @@ mib.MIBEntry ..> mib.AccessType
 mib.MIB ..> mib.Permission
 common.TrapListener <|.. manager.TrapListenerImpl
 manager.Manager ..> manager.TrapListenerImpl
+manager.TrapListenerImpl <|-- manager.HierarchicalManager
 @enduml
