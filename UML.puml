@@ -81,4 +81,5 @@ mib.MIB ..> mib.Permission
 common.TrapListener <|.. manager.TrapListenerImpl
 manager.Manager ..> manager.TrapListenerImpl
 manager.TrapListenerImpl <|-- manager.HierarchicalManager
+manager.Manager ..> manager.HierarchicalManager
 @enduml
